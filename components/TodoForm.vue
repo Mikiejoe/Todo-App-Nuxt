@@ -18,7 +18,7 @@
                     class="focus:outline-none border-orange-300 p-2 border rounded-md" />
             </div>
             <div class="flex justify-end gap-4">
-                <button type="submit" class="bg-green-500 px-2 rounded-md">{{ editing ? "Update" : "Create" }}</button>
+                <button type="submit" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">Create</button>
                 <button @click.prevent="close" class="bg-red-500 p-2 rounded-md">Cancel</button>
             </div>
         </form>
@@ -27,7 +27,12 @@
 
 
 <script setup>
+import { useTodo } from '../composables/useTodo'
 
+
+
+const todoStore = useTodoStore()
+useTodo(todoStore)
 const name = ref('')
 const description = ref('')
 const props = defineProps({
@@ -35,25 +40,27 @@ const props = defineProps({
     todo: Object,
 })
 
-watch(() => props.todo, (newTodo) => {
-    if (newTodo) {
-        name.value = newTodo.name
-        description.value = newTodo.description
-    } else {
-        name.value = ''
-        description.value = ''
+
+function addTodo() {
+    if (!name.value && !description.value && !name.value.length > 5 && !description.value.length > 5) {
+        return
     }
-}, { immediate: true })
+    const todo = {
+        name: name.value,
+        description: description.value
+    }
+    todoStore.addTodo(todo)
+    close()
+}
+
 
 function close() {
     emit('close')
 }
 
-const editing = computed(() => props.todo !== null)
 
 
 const emit = defineEmits(['close'])
-
 
 
 </script>

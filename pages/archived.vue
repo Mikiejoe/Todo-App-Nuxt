@@ -4,11 +4,12 @@ import { useTodo } from "../composables/useTodo"
 const todoStore = useTodoStore()
 useTodo(todoStore)
 
+const isFormOpen = ref(false)
 const todos = ref([])
 const loading = ref(true)
 
 function getTodos() {
-    todos.value = todoStore.$state.todos
+    todos.value = todoStore.$state.archived
 }
 
 onMounted(() => {
@@ -16,15 +17,13 @@ onMounted(() => {
     loading.value = false
 })
 
-const isFormOpen = ref(false)
-
 function showForm() {
     isFormOpen.value = !isFormOpen.value
 }
 
 useSeoMeta({
-  title: 'Lets Do It || My TODOS',
-  description: 'Todo app made with nuxt',
+    title: 'Lets Do It || My Archived TODOS',
+    description: 'Todo app made with nuxt',
 })
 </script>
 
@@ -42,15 +41,15 @@ useSeoMeta({
                     </div>
                 </div>
                 <div v-if="loading" class="text-xl mt-5 flex items-center justify-center">
-                    Loading Todos
+                    Loading Archived Todos
                 </div>
                 <div v-else>
 
                     <div v-if="todos.length < 1" class="text-xl mt-5 flex items-center justify-center">
-                        No Todos Found
+                        No Archived Todos Found
                     </div>
                     <div v-else v-for="todo in todos">
-                        <TodoItem :todo="todo" @open="showForm" @get="getTodos"/>
+                        <TodoItem :todo="todo" @open="showForm" @get="getTodos" />
                     </div>
                 </div>
             </div>
