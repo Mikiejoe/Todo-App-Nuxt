@@ -17,10 +17,8 @@
 </template>
 
 <script setup>
-import { useTodo } from "../composables/useTodo"
 
 const todoStore = useTodoStore()
-useTodo(todoStore)
 
 const props = defineProps({
     todo: Object

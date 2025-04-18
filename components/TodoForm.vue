@@ -27,12 +27,8 @@
 
 
 <script setup>
-import { useTodo } from '../composables/useTodo'
-
-
-
 const todoStore = useTodoStore()
-useTodo(todoStore)
+
 const name = ref('')
 const description = ref('')
 const props = defineProps({

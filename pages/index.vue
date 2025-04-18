@@ -1,8 +1,7 @@
 <script setup>
-import { useTodo } from "../composables/useTodo"
 
 const todoStore = useTodoStore()
-useTodo(todoStore)
+
 
 const todos = ref([])
 const loading = ref(true)

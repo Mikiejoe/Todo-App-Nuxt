@@ -1,8 +1,6 @@
 <script setup>
-import { useTodo } from "../composables/useTodo"
 
 const todoStore = useTodoStore()
-useTodo(todoStore)
 
 const isFormOpen = ref(false)
 const todos = ref([])
