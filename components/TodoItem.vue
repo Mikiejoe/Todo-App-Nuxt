@@ -5,47 +5,32 @@
             <p>{{ todo.description }}</p>
         </div>
         <div class="flex sm:flex-col items-center gap-4 justify-center">
-            <p class="capitalize self-end">{{ todo.status }}</p>
-            <div class="flex gap-2 text-white items-center">
-                    <button v-show="todo.status != 'archived'" class="bg-blue-500  px-4 py-2 rounded-md"
-                        @click="addToArchive()">Archive</button>
-                <button @click="deleteTodo" class="bg-red-500  px-4 py-2 rounded-md">Delete</button>
+            <div class="flex gap-2 justify-end w-full text-white items-center">
+                <button v-show="todo.status != 'archived'" class="bg-blue-500  px-4 py-2 rounded-md"
+                    @click="addToArchive()">{{ archiving ? "Archiving" : "Archive" }}</button>
+                <button @click="deleteTodo" class="bg-red-500  px-4 py-2 rounded-md">{{ deleting ? "Deleting" : "Delete"
+                    }}</button>
             </div>
         </div>
 
     </div>
 </template>
-
 <script setup>
 
-const todoStore = useTodoStore()
-
+const emit = defineEmits(['get']);
 const props = defineProps({
-    todo: Object
-})
+    todo: Object,
+});
 
-function addToArchive() {
-    todoStore.addTodoToArchive(props.todo)
-    get()
+const { archiveTodo: archive, deleteTodo: remove, archiving, deleting } = useTodos();
+
+async function addToArchive() {
+    await archive(props.todo);
+    emit('get');
 }
 
-function deleteTodo() {
-    if (props.todo.status === "archived") {
-        todoStore.removeFromArchive(props.todo.id)
-    }
-    else {
-        todoStore.deleteTodo(props.todo.id)
-    }
-    get()
+async function deleteTodo() {
+    await remove(props.todo);
+    emit('get');
 }
-
-function get() {
-    emit('get')
-}
-
-
-
-const emit = defineEmits(['get'])
-
-
 </script>

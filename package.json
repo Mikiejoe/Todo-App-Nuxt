@@ -10,11 +10,16 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/supabase": "^1.5.0",
     "@pinia/nuxt": "^0.11.0",
+    "@supabase/postgrest-js": "^1.19.4",
     "nuxt": "^3.16.2",
     "pinia": "^3.0.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
+  },
+  "overrides": {
+    "cookie": "0.7.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.13.2"

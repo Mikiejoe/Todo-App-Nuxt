@@ -17,46 +17,66 @@
                 <input v-model="description" type="text" placeholder="Todo description"
                     class="focus:outline-none border-orange-300 p-2 border rounded-md" />
             </div>
+            <div class="bg-red-500 text-white rounded-md text-md text-center" v-show="errorMsg">{{ errorMsg }}</div>
             <div class="flex justify-end gap-4">
-                <button type="submit" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">Create</button>
+                <button type="submit" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">{{ loading ?
+                    "Creating" : "Create" }}</button>
                 <button @click.prevent="close" class="bg-red-500 p-2 rounded-md">Cancel</button>
             </div>
         </form>
     </div>
 </template>
-
-
 <script setup>
-const todoStore = useTodoStore()
-
-const name = ref('')
-const description = ref('')
+const todoStore = useTodoStore();
+const name = ref('');
+const description = ref('');
+const loading = ref(false);
+const errorMsg = ref(null);
 const props = defineProps({
     isOpen: Boolean,
     todo: Object,
-})
+});
 
+const emit = defineEmits(['close']);
 
-function addTodo() {
-    if (!name.value && !description.value && !name.value.length > 5 && !description.value.length > 5) {
-        return
+async function addTodo() {
+    loading.value = true;
+    errorMsg.value = null;
+
+    if (!name.value || name.value.length < 3 || !description.value || description.value.length < 5) {
+        errorMsg.value = "Please enter a name (at least 3 characters) and a description (at least 5 characters).";
+        loading.value = false;
+        return;
     }
+
     const todo = {
         name: name.value,
-        description: description.value
-    }
-    todoStore.addTodo(todo)
-    close()
-}
+        description: description.value,
+    };
+    const client = useSupabaseClient();
+    const user = useSupabaseUser();
 
+    try {
+        const { error } = await client.from("todos").insert({ ...todo, user: user.value.id });
+
+        if (error) throw error;
+
+        todoStore.addTodo(todo);
+        closeForm();
+    } catch (error) {
+        errorMsg.value = error.message;
+    } finally {
+        loading.value = false;
+    }
+}
 
 function close() {
-    emit('close')
+    closeForm();
 }
 
-
-
-const emit = defineEmits(['close'])
-
-
+function closeForm() {
+    name.value = '';
+    description.value = '';
+    emit('close');
+}
 </script>

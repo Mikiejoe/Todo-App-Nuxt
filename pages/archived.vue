@@ -6,8 +6,18 @@ const isFormOpen = ref(false)
 const todos = ref([])
 const loading = ref(true)
 
-function getTodos() {
-    todos.value = todoStore.$state.archived
+async function getTodos() {
+    const supabase = useSupabaseClient()
+    const user = useSupabaseUser()
+    try {
+        const { data, error } = await supabase.from('archived').select("*").eq("user", user.value.id)
+        if (error) throw error
+        todoStore.setArchivedTodos(data)
+        todos.value = todoStore.$state.archived
+        return
+    } catch (error) {
+        console.log(error.message)
+    }
 }
 
 onMounted(() => {

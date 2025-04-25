@@ -7,20 +7,20 @@ export const useTodoStore = defineStore("todo", {
   }),
   actions: {
     setTodos(payload) {
+      console.log("payload: ", payload);
       this.todos = payload;
+    },
+    setArchivedTodos(payload) {
+      console.log("payload: ", payload);
+      this.archived = payload;
     },
 
     addTodo(todo) {
-      const newTodo = { ...todo, id: this.todos.length + 1, status: "pending" };
-      this.todos.push(newTodo);
+      this.todos.push(todo);
     },
 
     addTodoToArchive(todo) {
-      const newTodo = {
-        ...todo,
-        status: "archived",
-      };
-      this.archived.push(newTodo);
+      this.archived.push(todo);
       this.deleteTodo(todo.id);
     },
 
