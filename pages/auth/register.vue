@@ -53,13 +53,20 @@ async function onSubmit() {
         loading.value = false // Set loading to false after the operation completes
     }
 }
+
+
+useSeoMeta({
+    title: 'Lets Do It || Register',
+    description: 'Todo app made with nuxt',
+})
 </script>
 
 <template>
     <div class="w-full h-screen flex justify-center items-center">
         <div class="bg-gray-100 p-3 md:p-6 rounded-md shadow-md flex flex-col md:w-1/3">
             <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">Register</h1>
-            <div v-if="errorMessage" class="text-white text-center bg-red-300 p-2 rounded-md text-sm my-2">{{ errorMessage }}</div>
+            <div v-if="errorMessage" class="text-white text-center bg-red-300 p-2 rounded-md text-sm my-2">{{
+                errorMessage }}</div>
             <form @submit.prevent="onSubmit" class="w-full">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
@@ -82,7 +89,7 @@ async function onSubmit() {
                             class="form-checkbox h-4 w-4 text-orange-500 focus:outline-none focus:shadow-outline mr-2">
                         Remember me
                     </label>
-                    <NuxtLink to="/auth/forgot-password"
+                    <NuxtLink to="#"
                         class="inline-block align-baseline font-semibold text-sm text-orange-500 hover:text-orange-800">
                         Forgot Password?
                     </NuxtLink>
