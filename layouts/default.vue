@@ -32,11 +32,9 @@
 
 
 async function logout() {
-    console.log("logg")
     const client = useSupabaseClient()
     const { error } = await client.auth.signOut()
     if (error) return
-    console.log("loggs")
     const router = useRouter()
     router.replace("/auth/login")
 }

@@ -1,33 +1,15 @@
 <script setup>
 
-const todoStore = useTodoStore()
-
+const { todos, loading, error, getTodos } = useTodos()
 const isFormOpen = ref(false)
-const todos = ref([])
-const loading = ref(true)
-
-async function getTodos() {
-    const supabase = useSupabaseClient()
-    const user = useSupabaseUser()
-    try {
-        const { data, error } = await supabase.from('archived').select("*").eq("user", user.value.id)
-        if (error) throw error
-        todoStore.setArchivedTodos(data)
-        todos.value = todoStore.$state.archived
-        return
-    } catch (error) {
-        console.log(error.message)
-    }
-}
-
-onMounted(() => {
-    getTodos()
-    loading.value = false
-})
 
 function showForm() {
     isFormOpen.value = !isFormOpen.value
 }
+
+onMounted(() => {
+    getTodos("archived")
+})
 
 useSeoMeta({
     title: 'Lets Do It || My Archived TODOS',
@@ -51,13 +33,16 @@ useSeoMeta({
                 <div v-if="loading" class="text-xl mt-5 flex items-center justify-center">
                     Loading Archived Todos
                 </div>
+                <div v-else-if="error" class="text-xl mt-5 flex items-center justify-center">
+                    {{error}}
+                </div>
                 <div v-else>
 
                     <div v-if="todos.length < 1" class="text-xl mt-5 flex items-center justify-center">
                         No Archived Todos Found
                     </div>
                     <div v-else v-for="todo in todos">
-                        <TodoItem :todo="todo" @open="showForm" @get="getTodos" />
+                        <TodoItem :todo="todo" @open="showForm" @getTodos="getTodos" />
                     </div>
                 </div>
             </div>

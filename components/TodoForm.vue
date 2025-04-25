@@ -57,11 +57,11 @@ async function addTodo() {
     const user = useSupabaseUser();
 
     try {
-        const { error } = await client.from("todos").insert({ ...todo, user: user.value.id });
+        const { error,data } = await client.from("todos").insert({ ...todo, user: user.value.id });
 
         if (error) throw error;
 
-        todoStore.addTodo(todo);
+        todoStore.addTodo(data);
         closeForm();
     } catch (error) {
         errorMsg.value = error.message;

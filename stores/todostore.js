@@ -7,11 +7,9 @@ export const useTodoStore = defineStore("todo", {
   }),
   actions: {
     setTodos(payload) {
-      console.log("payload: ", payload);
       this.todos = payload;
     },
     setArchivedTodos(payload) {
-      console.log("payload: ", payload);
       this.archived = payload;
     },
 

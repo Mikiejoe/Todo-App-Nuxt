@@ -25,7 +25,7 @@ useSeoMeta({
                     <div class="flex justify-end">
                         <button @click="showForm"
                             class=" bg-green-500 px-4 py-2 rounded-md text-white  sm:text-lg md:text-xl">
-                            +Add Todo
+                            + Add Todo
                         </button>
                     </div>
                 </div>
@@ -40,7 +40,7 @@ useSeoMeta({
                         No Todos Found
                     </div>
                     <div v-else v-for="todo in todos" :key="todo.id">
-                        <TodoItem :todo="todo" @open="showForm" @get="getTodos" />
+                        <TodoItem :todo="todo" @open="showForm" @getTodos="getTodos" />
                     </div>
                 </div>
             </div>

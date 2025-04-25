@@ -1,12 +1,12 @@
 export default function useTodos() {
   const todoStore = useTodoStore();
   const todos = ref([]);
-  const loading = ref(false); 
+  const loading = ref(false);
   const error = ref(null);
   const archiving = ref(false);
   const deleting = ref(false);
 
-  async function getTodos() {
+  async function getTodos(table = "todos") {
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     loading.value = true;
@@ -14,7 +14,7 @@ export default function useTodos() {
 
     try {
       const { data, error: supabaseError } = await supabase
-        .from("todos")
+        .from(table)
         .select("*")
         .eq("user", user.value.id);
 
@@ -27,7 +27,6 @@ export default function useTodos() {
     } catch (err) {
       error.value =
         err.message || "An unexpected error occurred while fetching todos.";
-      console.error("Error fetching todos:", error.value);
     } finally {
       loading.value = false;
     }
@@ -35,7 +34,6 @@ export default function useTodos() {
 
   async function archiveTodo(todo) {
     if (!todo || !todo.id) {
-      console.error("Error: Invalid todo object provided for archiving.");
       return;
     }
     archiving.value = true;
@@ -49,7 +47,7 @@ export default function useTodos() {
 
       if (insertError) throw insertError;
 
-      todoStore.addTodoToArchive(todo); 
+      todoStore.addTodoToArchive(todo);
       const { error: deleteError } = await client
         .from("todos")
         .delete()
@@ -60,7 +58,6 @@ export default function useTodos() {
       archiving.value = false;
     } catch (err) {
       error.value = err.message || "Error archiving todo.";
-      console.error("Error archiving todo:", error.value);
     } finally {
       archiving.value = false;
     }
@@ -68,7 +65,7 @@ export default function useTodos() {
 
   async function deleteTodo(todo) {
     if (!todo || !todo.id) {
-      console.error("Error: Invalid todo object provided for deletion.");
+      console.error("Error: Invalid todo object provided for deletion: ", todo);
       return;
     }
     deleting.value = true;
@@ -83,7 +80,7 @@ export default function useTodos() {
           .eq("id", todo.id);
 
         if (deleteArchivedError) throw deleteArchivedError;
-        todoStore.removeFromArchive(todo.id); 
+        todoStore.removeFromArchive(todo.id);
       } else {
         const { error: deleteTodoError } = await client
           .from("todos")
@@ -93,7 +90,7 @@ export default function useTodos() {
         if (deleteTodoError) throw deleteTodoError;
         todoStore.deleteTodo(todo.id);
       }
-      
+
       getTodos();
     } catch (err) {
       error.value = err.message || "Error deleting todo.";
