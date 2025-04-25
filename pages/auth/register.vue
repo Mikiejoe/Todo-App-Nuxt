@@ -7,7 +7,9 @@ const email = ref('')
 const password = ref('')
 const cpassword = ref('')
 const errorMessage = ref('')
-const loading = ref(false) // Add loading ref
+const successMessage = ref('')
+const loading = ref(false)
+const router = useRouter()
 
 const supabase = useSupabaseClient()
 
@@ -43,14 +45,12 @@ async function onSubmit() {
         if (error) {
             errorMessage.value = error.message;
         }
-        else {
-            console.log(data.user.email);
-            // Optionally redirect the user or show a success message
-        }
+        successMessage.value = `Confirmation link sent to ${data.user.email}`
+        loading.value = false
+        router.push("/auth/login")
     } catch (error) {
         errorMessage.value = error.message;
-    } finally {
-        loading.value = false // Set loading to false after the operation completes
+        loading.value = false
     }
 }
 
@@ -67,6 +67,8 @@ useSeoMeta({
             <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">Register</h1>
             <div v-if="errorMessage" class="text-white text-center bg-red-300 p-2 rounded-md text-sm my-2">{{
                 errorMessage }}</div>
+            <div v-if="successMessage" class="text-white text-center bg-green-300 p-2 rounded-md text-sm my-2">{{
+                successMessage }}</div>
             <form @submit.prevent="onSubmit" class="w-full">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>

@@ -6,8 +6,10 @@ definePageMeta({
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
+const successMessage = ref('')
 const router = useRouter()
 const supabase = useSupabaseClient()
+const loading = ref(false)
 
 async function onSubmit() {
     console.log("hello")
@@ -21,7 +23,7 @@ async function onSubmit() {
             console.error('Login failed:', error.message)
             errorMessage.value = error.message
         } else {
-            console.log('Login success:', data)
+            successMessage.value = "Login successfull!!"
             router.push('/')
         }
     } catch (err) {
@@ -44,6 +46,8 @@ useSeoMeta({
             <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">Login</h1>
             <div v-if="errorMessage" class="text-white text-center bg-red-300 p-2 rounded-md text-sm my-2">{{
                 errorMessage }}</div>
+            <div v-if="successMessage" class="text-white text-center bg-green-300 p-2 rounded-md text-sm my-2">{{
+                successMessage }}</div>
             <form @submit.prevent="onSubmit" class="w-full">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
@@ -55,21 +59,10 @@ useSeoMeta({
                     <input type="password" id="password" placeholder="Password" required v-model="password"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 </div>
-                <div class="flex items-center justify-between mb-4">
-                    <label class="flex items-center text-sm text-gray-600">
-                        <input type="checkbox"
-                            class="form-checkbox h-4 w-4 text-orange-500 focus:outline-none focus:shadow-outline mr-2">
-                        Remember me
-                    </label>
-                    <NuxtLink to="#"
-                        class="inline-block align-baseline font-semibold text-sm text-orange-500 hover:text-orange-800">
-                        Forgot Password?
-                    </NuxtLink>
-                </div>
                 <div class="mb-4">
-                    <button type="submit" @click="onSubmit"
+                    <button type="submit" :disabled="loading"
                         class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
-                        Login
+                        {{ loading ? 'Loading...' : 'Login' }}
                     </button>
                 </div>
                 <div class="mb-4">

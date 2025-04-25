@@ -1,7 +1,7 @@
 export default function useTodos() {
   const todoStore = useTodoStore();
   const todos = ref([]);
-  const loading = ref(false); // Initialize as false
+  const loading = ref(false); 
   const error = ref(null);
   const archiving = ref(false);
   const deleting = ref(false);
@@ -49,7 +49,7 @@ export default function useTodos() {
 
       if (insertError) throw insertError;
 
-      todoStore.addTodoToArchive(todo); // Consider a store action
+      todoStore.addTodoToArchive(todo); 
       const { error: deleteError } = await client
         .from("todos")
         .delete()

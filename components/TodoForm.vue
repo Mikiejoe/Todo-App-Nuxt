@@ -19,7 +19,7 @@
             </div>
             <div class="bg-red-500 text-white rounded-md text-md text-center" v-show="errorMsg">{{ errorMsg }}</div>
             <div class="flex justify-end gap-4">
-                <button type="submit" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">{{ loading ?
+                <button type="submit" :disabled="loading" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">{{ loading ?
                     "Creating" : "Create" }}</button>
                 <button @click.prevent="close" class="bg-red-500 p-2 rounded-md">Cancel</button>
             </div>
