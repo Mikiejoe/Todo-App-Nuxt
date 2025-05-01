@@ -10,8 +10,7 @@ const errorMessage = ref('')
 const successMessage = ref('')
 const loading = ref(false)
 const router = useRouter()
-
-const supabase = useSupabaseClient()
+const { signUp } = useAuth()
 
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,18 +38,16 @@ async function onSubmit() {
         loading.value = false;
         return;
     }
-
-    try {
-        const { error, data } = await supabase.auth.signUp({ email: email.value, password: password.value })
-        if (error) {
-            errorMessage.value = error.message;
-        }
-        successMessage.value = `Confirmation link sent to ${data.user.email}`
+    const { data, error } = await signUp(email.value, password.value)
+    if (error) {
         loading.value = false
+        errorMessage.value = error
+        return
+    }
+    else {
+        loading.value = false
+        successMessage.value = `Signup successfull\n Confirmation Email sent to${data.email}`
         router.push("/auth/login")
-    } catch (error) {
-        errorMessage.value = error.message;
-        loading.value = false
     }
 }
 

@@ -8,29 +8,21 @@ const password = ref('')
 const errorMessage = ref('')
 const successMessage = ref('')
 const router = useRouter()
-const supabase = useSupabaseClient()
 const loading = ref(false)
+const { login } = useAuth()
 
 async function onSubmit() {
     errorMessage.value = ''
     loading.value = true
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.value,
-            password: password.value
-        })
-        if (error) {
-            errorMessage.value = error.message
-        } else {
-
-            loading.value = false
-            successMessage.value = "Login successfull!!"
-
-            router.push('/')
-        }
-    } catch (err) {
+    const { error } = login(email.value, password.value)
+    if (error) {
+        errorMessage.value = error
         loading.value = false
-        errorMessage.value = 'Something went wrong. Please try again.'
+    }
+    else {
+        successMessage.value = "Login successful"
+        loading.value = false
+        router.push("/")
     }
 }
 

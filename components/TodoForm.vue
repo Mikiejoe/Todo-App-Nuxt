@@ -19,14 +19,16 @@
             </div>
             <div class="bg-red-500 text-white rounded-md text-md text-center" v-show="errorMsg">{{ errorMsg }}</div>
             <div class="flex justify-end gap-4">
-                <button type="submit" :disabled="loading" @click.prevent="addTodo" class="bg-green-500 px-2 rounded-md">{{ loading ?
-                    "Creating" : "Create" }}</button>
+                <button type="submit" :disabled="loading" @click.prevent="addTodo"
+                    class="bg-green-500 px-2 rounded-md">{{ loading ?
+                        "Creating" : "Create" }}</button>
                 <button @click.prevent="close" class="bg-red-500 p-2 rounded-md">Cancel</button>
             </div>
         </form>
     </div>
 </template>
 <script setup>
+const { client, user } = useSupabase()
 const todoStore = useTodoStore();
 const name = ref('');
 const description = ref('');
@@ -53,19 +55,17 @@ async function addTodo() {
         name: name.value,
         description: description.value,
     };
-    const client = useSupabaseClient();
-    const user = useSupabaseUser();
 
     try {
-        const { error,data } = await client.from("todos").insert({ ...todo, user: user.value.id });
-
+        const { error, data } = await client.from("todos").insert({ ...todo, user: user.value.id }).select().limit(1).single();
+        
         if (error) throw error;
-
         todoStore.addTodo(data);
+        loading.value = false;
         closeForm();
     } catch (error) {
+        console.log("after adding4")
         errorMsg.value = error.message;
-    } finally {
         loading.value = false;
     }
 }

@@ -5,23 +5,18 @@ export default function useTodos() {
   const error = ref(null);
   const archiving = ref(false);
   const deleting = ref(false);
-
+  const { client, user } = useSupabase();
   async function getTodos(table = "todos") {
-    const supabase = useSupabaseClient();
-    const user = useSupabaseUser();
     loading.value = true;
     error.value = null;
-
     try {
-      const { data, error: supabaseError } = await supabase
+      const { data, error: supabaseError } = await client
         .from(table)
         .select("*")
         .eq("user", user.value.id);
-
       if (supabaseError) {
         throw supabaseError;
       }
-
       todoStore.setTodos(data);
       todos.value = todoStore.$state.todos;
     } catch (err) {
@@ -31,30 +26,23 @@ export default function useTodos() {
       loading.value = false;
     }
   }
-
   async function archiveTodo(todo) {
     if (!todo || !todo.id) {
       return;
     }
     archiving.value = true;
     error.value = null;
-    const client = useSupabaseClient();
-
     try {
       const { error: insertError } = await client
         .from("archived")
         .insert({ ...todo, status: "archived" });
-
       if (insertError) throw insertError;
-
       todoStore.addTodoToArchive(todo);
       const { error: deleteError } = await client
         .from("todos")
         .delete()
         .eq("id", todo.id);
-
       if (deleteError) throw deleteError;
-
       archiving.value = false;
     } catch (err) {
       error.value = err.message || "Error archiving todo.";
@@ -70,15 +58,12 @@ export default function useTodos() {
     }
     deleting.value = true;
     error.value = null;
-    const client = useSupabaseClient();
-
     try {
       if (todo.status === "archived") {
         const { error: deleteArchivedError } = await client
           .from("archived")
           .delete()
           .eq("id", todo.id);
-
         if (deleteArchivedError) throw deleteArchivedError;
         todoStore.removeFromArchive(todo.id);
       } else {
@@ -86,11 +71,9 @@ export default function useTodos() {
           .from("todos")
           .delete()
           .eq("id", todo.id);
-
         if (deleteTodoError) throw deleteTodoError;
         todoStore.deleteTodo(todo.id);
       }
-
       getTodos();
     } catch (err) {
       error.value = err.message || "Error deleting todo.";
@@ -99,7 +82,6 @@ export default function useTodos() {
       deleting.value = false;
     }
   }
-
   return {
     todos,
     loading,
