@@ -6,12 +6,13 @@
         </div>
         <div class="flex sm:flex-col items-center gap-4 justify-center">
             <div class="flex gap-2 justify-end w-full text-white items-center">
-                <button :disabled="archiving" v-show="todo.status != 'archived'"
+                <button :disabled="archiving || deleting" v-show="todo.status != 'archived'"
                     class="bg-blue-500 px-2 py-1 sm:px-4 sm:py-2 rounded-md" @click="addToArchive()">{{ archiving ?
                         "Archiving" :
-                    "Archive" }}</button>
-                <button @click="deleteTodo" class="bg-red-500  px-2 py-1 sm:px-4 sm:py-2 rounded-md">{{ deleting ?
-                    "Deleting" : "Delete"
+                        "Archive" }}</button>
+                <button :disabled="archiving || deleting" @click="deleteTodo"
+                    class="bg-red-500  px-2 py-1 sm:px-4 sm:py-2 rounded-md">{{ deleting ?
+                        "Deleting" : "Delete"
                     }}</button>
             </div>
         </div>

@@ -29,7 +29,7 @@
 </template>
 <script setup>
 const { client, user } = useSupabase()
-const todoStore = useTodoStore();
+const { createTodo } = useTodos()
 const name = ref('');
 const description = ref('');
 const loading = ref(false);
@@ -55,18 +55,14 @@ async function addTodo() {
         name: name.value,
         description: description.value,
     };
-
-    try {
-        const { error, data } = await client.from("todos").insert({ ...todo, user: user.value.id }).select().limit(1).single();
-        
-        if (error) throw error;
-        todoStore.addTodo(data);
-        loading.value = false;
-        closeForm();
-    } catch (error) {
+    const { error } = createTodo(todo)
+    if (error) {
         console.log("after adding4")
         errorMsg.value = error.message;
         loading.value = false;
+    } else {
+        loading.value = false;
+        closeForm();
     }
 }
 

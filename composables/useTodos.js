@@ -82,6 +82,23 @@ export default function useTodos() {
       deleting.value = false;
     }
   }
+
+  async function createTodo(todo) {
+    try {
+      const { error, data } = await client
+        .from("todos")
+        .insert({ ...todo, user: user.value.id })
+        .select()
+        .limit(1)
+        .single();
+      if (error) throw error;
+      todoStore.addTodo(data);
+      loading.value = false;
+      return { error: error, data: data };
+    } catch (error) {
+      return { error: error.message, data: data };
+    }
+  }
   return {
     todos,
     loading,
@@ -91,5 +108,6 @@ export default function useTodos() {
     getTodos,
     archiveTodo,
     deleteTodo,
+    createTodo,
   };
 }
